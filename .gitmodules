@@ -1,0 +1,3 @@
+[submodule "stubber-ui"]
+	path = stubber-ui
+	url = https://github.com/Marcusk19/stubber-ui.git
