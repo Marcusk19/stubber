@@ -2,7 +2,9 @@
 package util
 
 import (
+	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"runtime"
 	"strconv"
@@ -77,4 +79,44 @@ func HandleError(err error) bool {
 		return true
 	}
 	return false
+}
+
+func UploadFile(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Methods", "*")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "*")
+	// helper function for uploading a file
+	log.Print("Uploading file...")
+
+	// Parse multipart form
+	// 10 << 20 specifies max upload of 10 MB files
+	r.ParseMultipartForm(10 << 20)
+	file, handler, err := r.FormFile("myFile")
+	HandleError(err)
+	defer file.Close()
+	log.Print("File to upload: " + handler.Filename)
+	log.Print("File size: " + strconv.FormatInt(handler.Size, 10))
+
+	// Create a temporary file within our temp-images directory that follows
+	// a particular naming pattern
+	tempFile, err := ioutil.TempFile("/tmp/uploaded_rankings", "data-*.csv")
+	HandleError(err)
+	if !HandleError(err) {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	defer tempFile.Close()
+	log.Print("Created tmp file for writing")
+	// read contents of file into a byte array
+	fileBytes, err := ioutil.ReadAll(file)
+	if !HandleError(err) {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	// write this file to temp file
+	tempFile.Write(fileBytes)
+
+	log.Print("Successfully uploaded file")
+	w.WriteHeader(http.StatusCreated)
 }

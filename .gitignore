@@ -20,3 +20,4 @@ vendor/
 # database
 pg_data
 .DS_Store
+tmp/
