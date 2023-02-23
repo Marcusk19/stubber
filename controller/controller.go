@@ -187,7 +187,6 @@ func UpdateMovie(w http.ResponseWriter, r *http.Request) {
 // function to remove a movie from database
 func DeleteMovie(w http.ResponseWriter, r *http.Request) {
 	// cors handler
-	var response model.Response
 	if r.Method == "OPTIONS" {
 		handleCors(w)
 		return
@@ -204,16 +203,11 @@ func DeleteMovie(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.Status = http.StatusOK
-	response.Message = "sucessfully deleted"
-
 	log.Print("[INFO] DELETED movie: " + id)
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Methods", "*")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(response)
-
 }
 
 // function to get movie by id

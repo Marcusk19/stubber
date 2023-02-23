@@ -1,6 +1,6 @@
 # Stubber
 ---
-Self hosted web app for listing watched movies and rating them. This product uses the [TMDB API](https://www.themoviedb.org/) but is not endorsed or certified by TMDB
+Self hosted web app for listing watched movies and rating them. This product uses the TMDB API but is not endorsed or certified by TMDB
 
 <img src="images/screen.png" style="width:800px; align:center;" />
 

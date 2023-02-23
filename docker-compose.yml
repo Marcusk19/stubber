@@ -10,8 +10,6 @@ services:
       - db
     ports:
       - 9876:9876
-    volumes:
-      - ./tmp:/tmp # For debugging purposes
     tty: true
   frontend:
     container_name: stubber-ui
