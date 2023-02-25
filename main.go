@@ -8,7 +8,6 @@ import (
 	"github.com/joho/godotenv"
 
 	"github.com/Marcusk19/stubber/controller"
-	"github.com/Marcusk19/stubber/util"
 )
 
 type Movie struct {
@@ -27,7 +26,7 @@ func handleRequests() {
 	myRouter.HandleFunc("/api/v1/movies", controller.InsertMovie).Methods("POST", "OPTIONS")
 	myRouter.HandleFunc("/api/v1/movies", controller.UpdateMovie).Methods("POST")
 	myRouter.HandleFunc("/api/v1/movies/delete/{id}", controller.DeleteMovie).Methods("DELETE", "OPTIONS")
-	myRouter.HandleFunc("/upload", util.UploadFile)
+	myRouter.HandleFunc("/upload", controller.UploadFile)
 
 	log.Fatal(http.ListenAndServe(":9876", myRouter))
 }
