@@ -11,7 +11,7 @@ services:
     ports:
       - 9876:9876
     volumes:
-      - ./tmp:/tmp # For debugging purposes
+      - ./uploaded_rankings:/tmp/uploaded_rankings # For debugging purposes
     tty: true
   frontend:
     container_name: stubber-ui

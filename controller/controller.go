@@ -3,6 +3,7 @@ package controller
 import (
 	"database/sql"
 	"encoding/json"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -251,6 +252,54 @@ func GetMovie(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	json.NewEncoder(w).Encode(response)
 
+}
+
+// Upload file to /tmp/uploaded_rankings directory
+func UploadFile(w http.ResponseWriter, r *http.Request) {
+	var response model.Response
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Methods", "*")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "*")
+	// helper function for uploading a file
+	log.Print("Uploading file...")
+
+	// Parse multipart form
+	// 10 << 20 specifies max upload of 10 MB files
+	r.ParseMultipartForm(900 << 20)
+	file, handler, err := r.FormFile("myFile")
+	if err != nil {
+		log.Println("Error receiving the file")
+		log.Println(err)
+		return
+	}
+	defer file.Close()
+	log.Printf("File to upload: %+v\n", handler.Filename)
+	log.Printf("File Size: %+v\n", handler.Size)
+	log.Printf("MIME Header: %+v\n", handler.Header)
+
+	// Create a temporary file within our temp-images directory that follows
+	// a particular naming pattern
+	tempFile, err := ioutil.TempFile("/tmp/uploaded_rankings", "data-*.csv")
+	if err != nil {
+		log.Print(err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+	defer tempFile.Close()
+
+	log.Print("Created tmp file for writing")
+	// write this file to temp file
+	_, err = io.Copy(tempFile, file)
+	if err != nil {
+		log.Print("[ERROR] problem copying")
+	}
+
+	log.Print("Successfully uploaded file")
+	response.Status = http.StatusCreated
+	response.Message = "Successfully uploaded file"
+
+	json.NewEncoder(w).Encode(response)
 }
 
 func checkErr(err error) {
